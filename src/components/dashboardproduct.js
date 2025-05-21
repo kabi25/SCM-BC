@@ -20,7 +20,7 @@ export default function ProductCard({name, id, stage, party, progress}) {
         <Flex align="center" justify="space-between" w="100%">
             <VStack align="start" h="90px" w="80%">
                 
-                <Text>Name: {name} | ID: {id} | Party: <Link isExternal href={"https://sepolia.etherscan.io/address/" + party.toString()}>{party}</Link> | Stage: {stage} </Text>
+                <Text>Name {name} | ID: {id} | Party: <Link isExternal href={"https://sepolia.etherscan.io/address/" + party.toString()}>{party}</Link> | Stage: {stage} </Text>
                 
                 <Progress align="left" height="16px" color="white" w="100%" value={progress}/>
                 
