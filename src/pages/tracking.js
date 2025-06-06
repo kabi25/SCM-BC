@@ -31,7 +31,12 @@ import {
   Td,
   FormControl,
   Select,
+  Container,
+  SimpleGrid,
+  useColorModeValue,
 } from '@chakra-ui/react';
+import { GoogleMap, LoadScript, Marker, Polyline } from '@react-google-maps/api';
+import ProductTracker from '../components/ProductTracker';
 
 import { useParams } from "react-router-dom"; // This is so we can grab the ID
 
@@ -86,11 +91,29 @@ function TransactionCard({id, sender, receiver, sender_role, reciever_role, pric
     )
 }
 
-export default function Tracking() {
+// Sample location data - In a real app, this would come from your blockchain
+const sampleLocations = {
+  manufacturer: { lat: 37.7749, lng: -122.4194 }, // San Francisco
+  distributor: { lat: 34.0522, lng: -118.2437 }, // Los Angeles
+  supplier: { lat: 40.7128, lng: -74.0060 }, // New York
+};
+
+const mapContainerStyle = {
+  width: '100%',
+  height: '400px',
+};
+
+const center = {
+  lat: 37.0902,
+  lng: -95.7129, // Center of USA
+};
+
+const TrackingPage = () => {
   const address = useAddress();
   const { isLoading, contract } = useContract(contractAddress);
   const [product, setProduct] = useState();
   const [transactionHistory, setTransactionHistory] = useState();
+  const [mapPath, setMapPath] = useState([]);
   
   const { id } = useParams(); // grab the product ID
 
@@ -125,54 +148,75 @@ export default function Tracking() {
     console.log(product)
   }, [product])
 
+  // This would be replaced with actual data from your blockchain
+  useEffect(() => {
+    // Sample path for demonstration
+    setMapPath([
+      sampleLocations.manufacturer,
+      sampleLocations.distributor,
+      sampleLocations.supplier,
+    ]);
+  }, []);
+
   return (
-    <>
-      <Center m={{base: "25px", md: "50px"}}>
-            <VStack border="1px" p="30px" rounded={7} w="95%" maxW="1200px" minH="700px">
+    <Container maxW="container.xl" py={8}>
+      <Heading
+        as="h1"
+        size="xl"
+        bgGradient="linear(to-r, blue.400, blue.600)"
+        bgClip="text"
+        mb={8}
+        textAlign="center"
+      >
+        Product Tracking
+      </Heading>
 
-            {/* PRODUCT MAIN INFORMATION */}
-                <Heading py="10px" fontSize="2xl">Product Information</Heading>
-            {product &&
-              <div>
-                {product[2] ? 
-                  <Box align="left">
-                      <VStack align="left" p="20px" minW={{base: "400px", md: "700px"}}>
-                          <Text fontSize="lg">Name: {product[2]} </Text>
-                          <Text fontSize="lg">ID: {id} </Text>
-                          <Text fontSize="lg">Quantity: {product[3]._hex} </Text>
-                          <Text fontSize="lg">Stage: {NUM_TO_STAGE.get(product[1])} </Text>
-                          <Text fontSize="lg">Current Owner: <Link isExternal href={"https://sepolia.etherscan.io/address/" + product[5].toString()}>{product[6] + " (" + product[5] + ")"}</Link></Text>
-                          <Progress align="left" height="16px" color="white" w="100%" value={(100*product[1])/5}/>
-                      </VStack>
-                  </Box>
-                  : <div> invalid product id </div>
-                }
-              </div>
-            }
-                
-            <Divider color="white" my="60px" w={{base: "400px", md: "700px"}}/>
+      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={8}>
+        <Box
+          bg={useColorModeValue('white', 'gray.800')}
+          p={6}
+          rounded="xl"
+          shadow="lg"
+        >
+          <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
+            <GoogleMap
+              mapContainerStyle={mapContainerStyle}
+              center={center}
+              zoom={4}
+            >
+              {mapPath.map((location, index) => (
+                <Marker
+                  key={index}
+                  position={location}
+                  label={{
+                    text: Object.keys(sampleLocations)[index],
+                    color: 'white',
+                  }}
+                />
+              ))}
+              <Polyline
+                path={mapPath}
+                options={{
+                  strokeColor: '#3182CE',
+                  strokeOpacity: 1.0,
+                  strokeWeight: 2,
+                }}
+              />
+            </GoogleMap>
+          </LoadScript>
+        </Box>
 
-            {/* PRODUCT HISTORY */}
-            <Heading py="20px" fontSize="2xl">Transaction History</Heading>
-
-            {transactionHistory && 
-              <div>
-                {
-                  (transactionHistory[0]) ? (
-                    transactionHistory.map(history =>
-                          {
-                            return <TransactionCard id={history[0]._hex} sender={ history.sender}
-                            sender_role={NUM_TO_STAGE.get(history.senderrole)} receiver={history.receiver} reciever_role={NUM_TO_STAGE.get(history[10])} price={history.price} 
-                            memo={history.memo} timestamp={history.timestamp._hex} sendername = {history.sendername} receivername={history.receivername}/>
-                          })
-                  )
-                    : <div> no valid transactions </div>
-                }
-              </div>
-            }
-
-            </VStack>
-        </Center>
-    </>
+        <Box
+          bg={useColorModeValue('white', 'gray.800')}
+          p={6}
+          rounded="xl"
+          shadow="lg"
+        >
+          <ProductTracker />
+        </Box>
+      </SimpleGrid>
+    </Container>
   );
-}
+};
+
+export default TrackingPage;

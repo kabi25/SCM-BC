@@ -136,6 +136,39 @@ export default function Navbar() {
                   Dashboard
                 </Text>
               </Link>
+              <Link 
+                href="/Tracking" 
+                position="relative"
+                _hover={{ textDecoration: 'none' }}
+              >
+                <Text 
+                  color="whiteAlpha.800" 
+                  fontSize="lg" 
+                  fontWeight="medium"
+                  transition="all 0.3s"
+                  _hover={{ 
+                    color: "white",
+                    _after: {
+                      transform: 'scaleX(1)',
+                      transformOrigin: 'left',
+                    },
+                  }}
+                  _after={{
+                    content: '""',
+                    position: 'absolute',
+                    bottom: '-6px',
+                    left: '0',
+                    right: '0',
+                    height: '2px',
+                    background: 'blue.400',
+                    transform: 'scaleX(0)',
+                    transition: 'transform 0.3s',
+                    transformOrigin: 'right',
+                  }}
+                >
+                  Tracking
+                </Text>
+              </Link>
               
               <ConnectWallet 
                 theme="dark" 

@@ -1,66 +1,85 @@
 import React from 'react';
 import {
-  Center,
-  Text,
-  Flex,
-  VStack,
-  Image,
+  Box,
+  Container,
   Heading,
-  FormControl,
-  FormLabel,
-  Input,
-  Button
+  Text,
+  SimpleGrid,
+  Icon,
+  VStack,
+  Button,
+  useColorModeValue,
 } from '@chakra-ui/react';
-import { Web3Button } from '@thirdweb-dev/react';
+import { FaShieldAlt, FaRoute, FaFileContract, FaChartLine } from 'react-icons/fa';
 
+const Feature = ({ title, text, icon }) => {
+  return (
+    <VStack
+      p={6}
+      bg={useColorModeValue('white', 'gray.800')}
+      rounded="xl"
+      shadow="lg"
+      spacing={4}
+      align="start"
+    >
+      <Icon as={icon} w={10} h={10} color="blue.500" />
+      <Heading size="md">{title}</Heading>
+      <Text color={useColorModeValue('gray.600', 'gray.400')}>{text}</Text>
+    </VStack>
+  );
+};
 
 export default function Home() {
-
-  function handleSubmit(event) {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    const data = Object.fromEntries(formData.entries());
-    // console.log(data.id);
-    window.location.href = "/track/" + data.id;
-  }
-
   return (
-      <>
+    <Container maxW="container.xl" py={20}>
+      <VStack spacing={12}>
+        <Box textAlign="center">
+          <Heading
+            as="h1"
+            size="2xl"
+            bgGradient="linear(to-r, blue.400, blue.600)"
+            bgClip="text"
+            mb={4}
+          >
+            Blockchain-Powered Supply Chain Management
+          </Heading>
+          <Text fontSize="xl" color="gray.600" maxW="2xl" mx="auto">
+            Transform your supply chain with transparent, secure, and efficient blockchain technology
+          </Text>
+        </Box>
 
-      {/** HERO */}
-      <Center justify="center" p={{base: "50px", mdd: "100px"}} backgroundColor="#131313" bgImage="linear-gradient(45deg, rgba(0, 0, 0, 0.6) 0%, rgba(60, 60, 60, 0) 100%), url('scm-bg.jpg')" position="block" backgroundSize="cover" >
-        <Flex direction={{ base: "column", md: "row"}} justify="space-between" align="center" flexWarp="wrap" w="100%" maxW="800px">
-          <VStack my="200px">
-            <Heading>Blockchain based Supply Chain Management</Heading>
-            <Text fontSize="xl">Using blockchain to keep our supply chain transparent, safe, and efficient</Text>
-          </VStack>
-          <VStack align="start" fontSize="xl" my="10px" flexWrap="nowrap">
-              <Center mx="20px" my="10px">
-                  <Image src="supplychainlogo2.png" borderRadius="lg" maxW="325px"/>
-              </Center>
-          </VStack>
-        </Flex>
-      </Center>
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={10} w="full">
+          <Feature
+            icon={FaShieldAlt}
+            title="Enhanced Security"
+            text="Immutable blockchain records ensure data integrity and prevent fraud"
+          />
+          <Feature
+            icon={FaRoute}
+            title="Real-time Tracking"
+            text="Monitor your entire supply chain with complete visibility"
+          />
+          <Feature
+            icon={FaFileContract}
+            title="Smart Contracts"
+            text="Automate compliance and documentation with blockchain smart contracts"
+          />
+          <Feature
+            icon={FaChartLine}
+            title="Analytics"
+            text="Gain insights with comprehensive supply chain analytics"
+          />
+        </SimpleGrid>
 
-    {/** TRACKER */}
-    <Center justify="center" p={{base: "50px", mdd: "100px"}} backgroundColor="#131313" position="block" >
-        <Flex direction={{ base: "column", md: "row"}} justify="space-between" align="center" flexWarp="wrap" w="100%" maxW="800px">
-          <VStack align="start" fontSize="xl" my="10px" flexWrap="nowrap">
-            <form onSubmit={handleSubmit}>
-              <FormControl py="2" minW="400px">
-                  <FormLabel>Product ID</FormLabel>
-                  <Input name="id"/>
-              </FormControl>
-              <Button mt="4" type="submit" colorScheme="blue" size="md" w="full" loadingText="Logging In">View History</Button>
-            </form>
-          </VStack>
-          <VStack my="150px">
-            <Heading>Track Your Product</Heading>
-            <Text fontSize="xl">Enter your product ID to open its history</Text>
-          </VStack>
-        </Flex>
-      </Center>
-
-      </>
+        <Button
+          size="lg"
+          colorScheme="blue"
+          px={8}
+          onClick={() => window.location.href = '/dashboard'}
+        >
+          Get Started
+        </Button>
+      </VStack>
+    </Container>
   );
 }
